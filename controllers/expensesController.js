@@ -68,7 +68,7 @@ exports.updateExpense = async(req,res) => {
 exports.deleteExpense = async(req,res) => {
      const id = req.params.id
     try{
-        const deleteExpense = await Expenses.findByIdAndDelete(id,{new:true})
+        const deleteExpense = await Expenses.findByIdAndDelete(id)
         if(!deleteExpense){
             return res.status(404).send({error:'Expense not found. Delete failed'})
         }

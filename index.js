@@ -22,6 +22,10 @@ app.use(cors());
 app.use('/auth',authRouter);
 app.use('/expenses',authenticate, expenseRouter);
 app.use('/users',authenticate,userRouter);
+app.get('/', (req, res) => {
+    return res.status(200).send({ message: 'Server is successfully running '})
+})
+
 
 //Connect to database
 

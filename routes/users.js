@@ -7,4 +7,6 @@ userRouter.get('/',authenticate,requiredRole(['admin']),userController.getAllUse
 userRouter.patch('/balance',userController.modifyInitialBalance);
 userRouter.get('/balance',authenticate,userController.getBalance);
 
+userRouter.put('/set-balance',authenticate,userController.updateBalance)
+
 module.exports = userRouter;

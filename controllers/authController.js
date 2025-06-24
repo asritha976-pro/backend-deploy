@@ -16,11 +16,24 @@ exports.signup = async(req,res) => {
         const user = new User({
             username: newUser.username,
             email: newUser.email,
-            password: hashedPassword,
-            balance: newUser.balance
+            password: hashedPassword
         })
-        user.save()
-        return res.status(201).send({message:'Your account has been successfully created. Welcome!'})
+        await user.save()
+        // return res.status(201).send({message:'Your account has been successfully created. Welcome!'})
+
+        const payload = {id:user._id,username:user.username ,role : user.role}
+     jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRY * 24 * 60 * 60},
+        (error,token) => {
+            if(error) {
+                console.error('Error generating jwt:',error.message)
+                return res.status(400).send({error:'Invalid credentials'})
+            }
+            return res.status(200).send({message:'You\'re now logged in',accessToken: token})
+        }
+    )
     }catch(error){
         console.error('Error registering user:',error.message);
         return res.status(400).send({error:'Error registering user'});
@@ -35,7 +48,7 @@ exports.login  =async(req,res) => {
     }
     const isPasswordCorrect = await bcrypt.compare(user.password,existingUser.password)
     if(!isPasswordCorrect){
-        return res.status(401).send({error:'Invalid email or passwordd'});
+        return res.status(401).send({error:'Invalid email or password'});
     }
     const payload = {id:existingUser._id,username:existingUser.username ,role : existingUser.role}
     jwt.sign(
